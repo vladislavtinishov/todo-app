@@ -1,0 +1,8 @@
+port: "8000"
+
+db:
+  username: "root"
+  password: "root"
+  host: "localhost"
+  port: "3306"
+  name: "go_lessons"
