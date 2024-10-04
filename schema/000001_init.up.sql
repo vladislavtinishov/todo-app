@@ -18,8 +18,8 @@ create table users_lists
     id int auto_increment primary key,
     user_id int not null,
     list_id int not null,
-    foreign key (user_id) references users(id),
-    foreign key (list_id) references todo_lists(id)
+    foreign key (user_id) references users(id) on delete cascade,
+    foreign key (list_id) references todo_lists(id) on delete cascade
 );
 
 create table todo_items
@@ -34,6 +34,6 @@ create table lists_items
     id int auto_increment primary key,
     list_id int not null,
     item_id int not null,
-    foreign key (list_id) references todo_lists(id),
-    foreign key (item_id) references todo_items(id)
+    foreign key (list_id) references todo_lists(id) on delete cascade,
+    foreign key (item_id) references todo_items(id) on delete cascade
 );

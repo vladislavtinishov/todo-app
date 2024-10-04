@@ -32,7 +32,35 @@ func (h *Handler) createList(c *gin.Context) {
 }
 
 func (h *Handler) editList(c *gin.Context) {
+	userId, err := getUserId(c)
 
+	if err != nil {
+		return
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	var input todo.UpdateListInput
+	if err := c.BindJSON(&input); err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = h.services.TodoList.Update(userId, id, input)
+
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "ok",
+	})
 }
 
 type getAllResponse struct {
@@ -55,10 +83,6 @@ func (h *Handler) getAllLists(c *gin.Context) {
 	c.JSON(http.StatusOK, getAllResponse{
 		Data: lists,
 	})
-}
-
-type getByIdResponse struct {
-	Data todo.TodoList `json:"data"`
 }
 
 func (h *Handler) getListById(c *gin.Context) {
@@ -86,5 +110,26 @@ func (h *Handler) getListById(c *gin.Context) {
 }
 
 func (h *Handler) deleteList(c *gin.Context) {
+	userId, err := getUserId(c)
 
+	if err != nil {
+		return
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	err = h.services.TodoList.Delete(userId, id)
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "ok",
+	})
 }
