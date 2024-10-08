@@ -18,6 +18,7 @@ create table users_lists
     id int auto_increment primary key,
     user_id int not null,
     list_id int not null,
+    done tinyint(1) not null default 0
     foreign key (user_id) references users(id) on delete cascade,
     foreign key (list_id) references todo_lists(id) on delete cascade
 );
