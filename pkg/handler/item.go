@@ -141,3 +141,53 @@ func (h *Handler) deleteItem(c *gin.Context) {
 		"ok": true,
 	})
 }
+
+func (h *Handler) markAsDone(c *gin.Context) {
+	userId, err := getUserId(c)
+
+	if err != nil {
+		return
+	}
+
+	itemId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = h.services.TodoItem.SetDoneStatus(userId, itemId, 1)
+
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"ok": true,
+	})
+}
+
+func (h *Handler) markAsUndone(c *gin.Context) {
+	userId, err := getUserId(c)
+
+	if err != nil {
+		return
+	}
+
+	itemId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = h.services.TodoItem.SetDoneStatus(userId, itemId, 0)
+
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"ok": true,
+	})
+}

@@ -130,3 +130,11 @@ func (r *TodoItemMysql) Update(userId, itemId int, input todo.UpdateItemInput) e
 
 	return err
 }
+
+func (r *TodoItemMysql) SetDoneStatus(userId, itemId, status int) error {
+	query := fmt.Sprintf("update %s ti inner join %s li on li.item_id = ti.id inner join %s ul on ul.list_id = li.list_id set done = ? where ti.id = ? and ul.user_id = ?", todoItemsTable, listsItemsTable, usersListsTable)
+
+	_, err := r.db.Exec(query, status, itemId, userId)
+
+	return err
+}

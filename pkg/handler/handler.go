@@ -44,6 +44,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			items.GET("/:id", h.getItemById)
 			items.PUT("/:id", h.editItem)
 			items.DELETE("/:id", h.deleteItem)
+			items.POST("/:id/done", h.markAsDone)
+			items.POST("/:id/undone", h.markAsUndone)
 		}
 	}
 

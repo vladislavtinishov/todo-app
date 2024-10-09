@@ -38,3 +38,7 @@ func (s *TodoItemService) Delete(userId, itemId int) error {
 func (s *TodoItemService) Update(userId, itemId int, input todo.UpdateItemInput) error {
 	return s.repo.Update(userId, itemId, input)
 }
+
+func (s *TodoItemService) SetDoneStatus(userId, itemId, status int) error {
+	return s.repo.SetDoneStatus(userId, itemId, status)
+}
