@@ -2,24 +2,15 @@ package service
 
 import (
 	"crypto/sha1"
-	"errors"
 	"fmt"
-	"github.com/golang-jwt/jwt/v4"
 	"github.com/vladislavtinishov/todo-app"
 	"github.com/vladislavtinishov/todo-app/pkg/repository"
-	"time"
+	"github.com/vladislavtinishov/todo-app/utils"
 )
 
 const (
-	salt      = "asfdkj420cd0sdsdlk"
-	signedKey = "3ij3nijoajsdsdjwoemnfoi"
-	tokenTTL  = 12 * time.Hour
+	salt = "asfdkj420cd0sdsdlk"
 )
-
-type tokenClaims struct {
-	jwt.RegisteredClaims
-	UserId int `json:"user_id"`
-}
 
 type AuthService struct {
 	repo repository.Authorization
@@ -41,37 +32,7 @@ func (s *AuthService) GenerateToken(username, password string) (string, error) {
 		return "", err
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
-		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(tokenTTL)),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-		},
-		user.Id,
-	})
-
-	return token.SignedString([]byte(signedKey))
-}
-
-func (s *AuthService) ParseToken(accessToken string) (int, error) {
-	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("invalid signing method")
-		}
-
-		return []byte(signedKey), nil
-	})
-
-	if err != nil {
-		return 0, err
-	}
-
-	claims, ok := token.Claims.(*tokenClaims)
-
-	if !ok {
-		return 0, errors.New("token claims is not of type &tokenClaims")
-	}
-
-	return claims.UserId, nil
+	return utils.GenerateJWT(user.Id)
 }
 
 func generatePasswordHash(password string) string {

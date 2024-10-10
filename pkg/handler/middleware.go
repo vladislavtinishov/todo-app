@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/vladislavtinishov/todo-app/utils"
 	"net/http"
 	"strings"
 )
@@ -27,12 +28,14 @@ func (h *Handler) userIdentity(c *gin.Context) {
 		return
 	}
 
-	userId, err := h.services.Authorization.ParseToken(headerParts[1])
+	claims, err := utils.ParseJWT(headerParts[1])
 
 	if err != nil {
 		NewErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
+
+	userId := claims.UserID
 
 	c.Set(userCtx, userId)
 }
